@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chef Balance - Gerenciamento de Estoque</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Estilos específicos para a página de estoque */
+        .header-section {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+            border-bottom: 2px solid #3498db;
+        }
+        
+        .header-section h1 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .header-section p {
+            font-size: 1.1rem;
+            color: #495057;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .form-container {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .form-header {
+            margin-bottom: 20px;
+        }
+        
+        .form-header h2 {
+            margin: 0;
+            color: #2c3e50;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        .info-panel {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .info-panel h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        .saldo-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .saldo-card h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        
+        .saldo-card p {
+            margin: 5px 0;
+        }
+        
+        .saldo-valor {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #27ae60;
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .table-header {
+            margin-bottom: 20px;
+        }
+        
+        .table-header h2 {
+            margin: 0;
+            color: #2c3e50;
+        }
+        
+        .filtros {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .filtros .form-group {
+            flex: 1;
+            min-width: 200px;
+            margin-bottom: 0;
+        }
+        
+        .action-btn {
+            padding: 8px 15px;
+            margin-right: 5px;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .filtros {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="confirm-modal-estoque" class="modal">
+        <div class="modal-content">
+            <h3>Confirmar Movimentação</h3>
+            <p id="confirm-message"></p>
+            <div class="modal-actions">
+                <button id="confirm-mov-btn" class="confirm-btn">Confirmar</button>
+                <button id="cancel-mov-btn" class="cancel-btn">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="success-modal" class="modal">
+        <div class="modal-content success-modal">
+            <h3>✅ Sucesso!</h3>
+            <p id="success-message"></p>
+            <div class="modal-actions">
+                <button id="ok-btn" class="confirm-btn">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botão de Toggle do Menu -->
+    <button id="menu-toggle" class="menu-toggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Menu Lateral -->
+    <nav class="menu-lateral">
+        <div class="menu-header">
+            <i class="fas fa-cocktail"></i>
+            <h3>Chef Balance</h3>
+        </div>
+        <a href="index.html">
+            <i class="fas fa-home"></i> Dashboard
+        </a>
+        <a href="cadastro-bebidas.html">
+            <i class="fas fa-wine-bottle"></i> Cadastro de Bebidas
+        </a>
+        <a href="estoque.html" class="active">
+            <i class="fas fa-warehouse"></i> Gerenciar Estoque
+        </a>
+        <a href="tipos.html">
+            <i class="fas fa-tags"></i> Tipos de Bebida
+        </a>
+        <div class="menu-footer">
+            <p>Sistema de Gestão de Bebidas</p>
+            <p>v2.0</p>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header-section">
+            <h1><i class="fas fa-warehouse"></i> Gerenciamento de Estoque</h1>
+            <p>Registre movimentações de entrada e saída de bebidas do estoque</p>
+        </div>
+        
+        <div class="form-container">
+            <div class="form-header">
+                <h2>Registrar Movimentação</h2>
+            </div>
+            
+            <form id="movimentacao-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="bebida"><i class="fas fa-wine-bottle"></i> Bebida:</label>
+                        <select id="bebida" required>
+                            <option value="">Selecione uma bebida...</option>
+                            <option value="1">Vinho Tinto Reserva</option>
+                            <option value="2">Whisky 12 anos</option>
+                            <option value="3">Cerveja Artesanal IPA</option>
+                            <option value="4">Vodka Premium</option>
+                            <option value="5">Licor de Amêndoa</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="tipo-movimento"><i class="fas fa-exchange-alt"></i> Tipo de Movimento:</label>
+                        <select id="tipo-movimento" required>
+                            <option value="REPOSICAO">Reposição de Estoque</option>
+                            <option value="VENDA">Venda</option>
+                            <option value="AJUSTE">Ajuste de Estoque</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="quantidade"><i class="fas fa-sort-numeric-up"></i> Quantidade:</label>
+                        <input type="number" id="quantidade" min="1" required placeholder="Ex: 10">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="motivo"><i class="fas fa-comment"></i> Motivo (opcional):</label>
+                        <input type="text" id="motivo" placeholder="Ex: Compra com fornecedor">
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" id="registrar-btn" class="primary-btn">
+                        <i class="fas fa-check"></i> Registrar Movimentação
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="info-panel">
+            <h2><i class="fas fa-chart-bar"></i> Saldo Atual</h2>
+            <div id="saldo-container">
+                <div class="saldo-card">
+                    <h3>Selecione uma bebida para ver o saldo atual</h3>
+                    <p>Escolha uma bebida no campo acima para visualizar o estoque atual</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <div class="table-header">
+                <h2><i class="fas fa-history"></i> Histórico de Movimentações</h2>
+                <div class="filtros">
+                    <div class="form-group">
+                        <label for="filtro-bebida">Filtrar por Bebida:</label>
+                        <select id="filtro-bebida">
+                            <option value="">Todas as bebidas</option>
+                            <option value="1">Vinho Tinto Reserva</option>
+                            <option value="2">Whisky 12 anos</option>
+                            <option value="3">Cerveja Artesanal IPA</option>
+                            <option value="4">Vodka Premium</option>
+                            <option value="5">Licor de Amêndoa</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="filtro-data">Filtrar por Data:</label>
+                        <input type="date" id="filtro-data">
+                    </div>
+                    <button id="btn-carregar" class="action-btn">
+                        <i class="fas fa-filter"></i> Filtrar
+                    </button>
+                </div>
+            </div>
+            
+            <table id="historico-table">
+                <thead>
+                    <tr>
+                        <th>Data/Hora</th>
+                        <th>Bebida</th>
+                        <th>Tipo</th>
+                        <th>Quantidade</th>
+                        <th>Motivo</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            
+            
+
+    <script src="js/estoque.js"></script>
+    <script src="js/menu.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Menu toggle
+            const menuToggle = document.getElementById('menu-toggle');
+            const menuLateral = document.querySelector('.menu-lateral');
+            
+            menuToggle.addEventListener('click', () => {
+                menuLateral.classList.toggle('aberto');
+                document.body.classList.toggle('menu-aberto');
+            });
+            
+            // Simulação de carregar saldo
+            document.getElementById('bebida').addEventListener('change', function() {
+                const bebidaId = this.value;
+                const bebidaNome = this.options[this.selectedIndex].text;
+                
+                if (!bebidaId) {
+                    document.getElementById('saldo-container').innerHTML = `
+                        <div class="saldo-card">
+                            <h3>Selecione uma bebida para ver o saldo atual</h3>
+                            <p>Escolha uma bebida no campo acima para visualizar o estoque atual</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Simular saldo
+                const saldo = Math.floor(Math.random() * 100) + 20;
+                
+                document.getElementById('saldo-container').innerHTML = `
+                    <div class="saldo-card">
+                        <h3>${bebidaNome}</h3>
+                        <p>Saldo Atual: <span class="saldo-valor">${saldo}</span> unidades</p>
+                        <p>Última atualização: ${new Date().toLocaleString()}</p>
+                    </div>
+                `;
+            });
+            
+            // Simulação de registro de movimentação
+            document.getElementById('movimentacao-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const bebidaSelect = document.getElementById('bebida');
+                const tipoSelect = document.getElementById('tipo-movimento');
+                const quantidade = document.getElementById('quantidade').value;
+                const motivo = document.getElementById('motivo').value || '-';
+                
+                if (!bebidaSelect.value) {
+                    alert('Selecione uma bebida!');
+                    return;
+                }
+                
+                const bebidaNome = bebidaSelect.options[bebidaSelect.selectedIndex].text;
+                const tipoMov = tipoSelect.options[tipoSelect.selectedIndex].text;
+                
+                // Mostrar modal de confirmação
+                document.getElementById('confirm-message').textContent = 
+                    `Confirmar ${tipoMov} de ${quantidade} unidade(s) de ${bebidaNome}?`;
+                
+                document.getElementById('confirm-modal-estoque').style.display = 'flex';
+            });
+            
+            // Confirmar movimentação
+            document.getElementById('confirm-mov-btn').addEventListener('click', function() {
+                document.getElementById('confirm-modal-estoque').style.display = 'none';
+                
+                // Simular sucesso
+                document.getElementById('success-message').textContent = 'Movimentação registrada com sucesso!';
+                document.getElementById('success-modal').style.display = 'flex';
+                
+                // Limpar formulário
+                document.getElementById('movimentacao-form').reset();
+                document.getElementById('saldo-container').innerHTML = `
+                    <div class="saldo-card">
+                        <h3>Selecione uma bebida para ver o saldo atual</h3>
+                        <p>Escolha uma bebida no campo acima para visualizar o estoque atual</p>
+                    </div>
+                `;
+            });
+            
+            // Fechar modais
+            document.getElementById('cancel-mov-btn').addEventListener('click', function() {
+                document.getElementById('confirm-modal-estoque').style.display = 'none';
+            });
+            
+            document.getElementById('ok-btn').addEventListener('click', function() {
+                document.getElementById('success-modal').style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
