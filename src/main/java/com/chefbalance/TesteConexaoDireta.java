@@ -48,7 +48,7 @@ public class TesteConexaoDireta {
             e.printStackTrace();
         } catch (Exception e) {
             System.err.println("❌ ERRO durante a conexão:");
-            e.printStackTrace();
+            e.printStackTrace(); //dd
         }
     }
 }
