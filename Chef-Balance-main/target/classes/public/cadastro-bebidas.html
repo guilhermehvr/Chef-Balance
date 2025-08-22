@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chef Balance - Cadastro de Bebidas</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Estilos específicos para a página de cadastro */
+        .header-section {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+            border-bottom: 2px solid #3498db;
+        }
+        
+        .header-section h1 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .header-section p {
+            font-size: 1.1rem;
+            color: #495057;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .form-container {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .form-header h2 {
+            margin: 0;
+            color: #2c3e50;
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .table-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .table-controls .form-group {
+            flex: 1;
+            min-width: 200px;
+            margin-bottom: 0;
+        }
+        
+        .action-btn {
+            padding: 8px 15px;
+            margin-right: 5px;
+            font-size: 0.9rem;
+        }
+        
+        /* Melhorias no formulário */
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .table-controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<div id="confirm-modal" class="modal">
+    <div class="modal-content">
+        <h3>Confirmar Exclusão</h3>
+        <p>Tem certeza que deseja excluir esta bebida?</p>
+        <div class="modal-actions">
+            <button id="confirm-delete-btn" class="confirm-btn">Excluir</button>
+            <button id="cancel-delete-btn" class="cancel-btn">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<body>
+    <!-- Botão de Toggle do Menu -->
+    <button id="menu-toggle" class="menu-toggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Menu Lateral -->
+    <nav class="menu-lateral">
+        <div class="menu-header">
+            <i class="fas fa-cocktail"></i>
+            <h3>Chef Balance</h3>
+        </div>
+        <a href="index.html">
+            <i class="fas fa-home"></i> Dashboard
+        </a>
+        <a href="cadastro-bebidas.html" class="active">
+            <i class="fas fa-wine-bottle"></i> Cadastro de Bebidas
+        </a>
+        <a href="estoque.html">
+            <i class="fas fa-warehouse"></i> Gerenciar Estoque
+        </a>
+        <a href="tipos.html">
+            <i class="fas fa-tags"></i> Tipos de Bebida
+        </a>
+        <div class="menu-footer">
+            <p>Sistema de Gestão de Bebidas</p>
+            <p>v2.0</p>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header-section">
+            <h1><i class="fas fa-wine-bottle"></i> Cadastro de Bebidas</h1>
+            <p>Adicione e gerencie as bebidas do seu estabelecimento</p>
+        </div>
+
+        <div class="form-container">
+            <div class="form-header">
+                <h2 id="form-title">Adicionar Nova Bebida</h2>
+                <button id="clear-form-btn" class="action-btn">
+                    <i class="fas fa-redo"></i> Limpar Formulário
+                </button>
+            </div>
+            
+            <form id="bebida-form">
+                <input type="hidden" id="bebida-id">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nome"><i class="fas fa-tag"></i> Nome:</label>
+                        <input type="text" id="nome" required minlength="2" placeholder="Ex: Vinho Tinto Reserva">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="tipo"><i class="fas fa-list"></i> Tipo:</label>
+                        <select id="tipo" required>
+                            <option value="">Selecione um tipo...</option>
+                            <option value="1">Vinho</option>
+                            <option value="2">Whisky</option>
+                            <option value="3">Cerveja</option>
+                            <option value="4">Vodka</option>
+                            <option value="5">Licor</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="preco-custo"><i class="fas fa-dollar-sign"></i> Preço de Custo (R$):</label>
+                        <input type="number" id="preco-custo" step="0.01" min="0.01" required placeholder="0.00">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="preco-venda"><i class="fas fa-tags"></i> Preço de Venda (R$):</label>
+                        <input type="number" id="preco-venda" step="0.01" min="0.01" required placeholder="0.00">
+                    </div>
+                </div>
+                
+                
+                
+                <div class="form-actions">
+                    <button type="submit" id="save-btn" class="primary-btn">
+                        <i class="fas fa-save"></i> Salvar Bebida
+                    </button>
+                    <button type="button" id="cancel-btn" class="secondary-btn">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="table-container">
+            <div class="table-header">
+                <h2><i class="fas fa-list"></i> Bebidas Cadastradas</h2>
+                <div class="table-controls">
+                    <div class="form-group">
+                        <input type="text" id="search-input" placeholder="Pesquisar por nome...">
+                    </div>
+                    <div class="form-group">
+                        <select id="filter-type">
+                            <option value="">Todos os tipos</option>
+                            <option value="1">Vinho</option>
+                            <option value="2">Whisky</option>
+                            <option value="3">Cerveja</option>
+                            <option value="4">Vodka</option>
+                            <option value="5">Licor</option>
+                        </select>
+                    </div>
+                    <button id="search-btn" class="action-btn">
+                        <i class="fas fa-search"></i> Buscar
+                    </button>
+                </div>
+            </div>
+            
+            <table id="bebidas-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Tipo</th>
+                        <th>Preço Custo</th>
+                        <th>Preço Venda</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Vinho Tinto Reserva</td>
+                        <td>Vinho</td>
+                        <td>R$ 45.90</td>
+                        <td>R$ 89.90</td>
+                        <td>
+                            <button class="action-btn edit-btn">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                            <button class="action-btn delete-btn">
+                                <i class="fas fa-trash"></i> Excluir
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Whisky 12 anos</td>
+                        <td>Whisky</td>
+                        <td>R$ 120.00</td>
+                        <td>R$ 249.90</td>
+                        <td>
+                            <button class="action-btn edit-btn">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                            <button class="action-btn delete-btn">
+                                <i class="fas fa-trash"></i> Excluir
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Cerveja Artesanal IPA</td>
+                        <td>Cerveja</td>
+                        <td>R$ 8.50</td>
+                        <td>R$ 18.90</td>
+                        <td>
+                            <button class="action-btn edit-btn">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                            <button class="action-btn delete-btn">
+                                <i class="fas fa-trash"></i> Excluir
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Vodka Premium</td>
+                        <td>Vodka</td>
+                        <td>R$ 35.00</td>
+                        <td>R$ 79.90</td>
+                        <td>
+                            <button class="action-btn edit-btn">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                            <button class="action-btn delete-btn">
+                                <i class="fas fa-trash"></i> Excluir
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>Licor de Amêndoa</td>
+                        <td>Licor</td>
+                        <td>R$ 28.50</td>
+                        <td>R$ 65.00</td>
+                        <td>
+                            <button class="action-btn edit-btn">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                            <button class="action-btn delete-btn">
+                                <i class="fas fa-trash"></i> Excluir
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            
+
+    <script src="js/app.js"></script>
+    <script src="js/menu.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Menu toggle
+            const menuToggle = document.getElementById('menu-toggle');
+            const menuLateral = document.querySelector('.menu-lateral');
+            
+            menuToggle.addEventListener('click', () => {
+                menuLateral.classList.toggle('aberto');
+                document.body.classList.toggle('menu-aberto');
+            });
+            
+            // Botões de ação na tabela
+            const editButtons = document.querySelectorAll('.edit-btn');
+            const deleteButtons = document.querySelectorAll('.delete-btn');
+            
+            editButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const row = this.closest('tr');
+                    const id = row.cells[0].textContent;
+                    const nome = row.cells[1].textContent;
+                    const tipo = row.cells[2].textContent;
+                    const precoCusto = row.cells[3].textContent.replace('R$ ', '');
+                    const precoVenda = row.cells[4].textContent.replace('R$ ', '');
+                    
+                    // Preencher formulário
+                    document.getElementById('form-title').textContent = 'Editar Bebida';
+                    document.getElementById('bebida-id').value = id;
+                    document.getElementById('nome').value = nome;
+                    
+                    // Selecionar tipo correto
+                    const tipoSelect = document.getElementById('tipo');
+                    for (let i = 0; i < tipoSelect.options.length; i++) {
+                        if (tipoSelect.options[i].text === tipo) {
+                            tipoSelect.selectedIndex = i;
+                            break;
+                        }
+                    }
+                    
+                    document.getElementById('preco-custo').value = precoCusto;
+                    document.getElementById('preco-venda').value = precoVenda;
+                    
+                    // Rolar para o formulário
+                    document.querySelector('.form-container').scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+            
+            deleteButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const row = this.closest('tr');
+                    const id = row.cells[0].textContent;
+                    const nome = row.cells[1].textContent;
+                    
+                    if(confirm(`Tem certeza que deseja excluir a bebida "${nome}" (ID: ${id})?`)) {
+                        row.style.opacity = '0.5';
+                        setTimeout(() => {
+                            row.remove();
+                        }, 300);
+                    }
+                });
+            });
+            
+            // Pesquisa em tempo real
+            const searchInput = document.getElementById('search-input');
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase().trim();
+                const rows = document.querySelectorAll('#bebidas-table tbody tr');
+                
+                rows.forEach(row => {
+                    const name = row.cells[1].textContent.toLowerCase();
+                    if(name.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+            
+            // Filtro por tipo
+            const filterType = document.getElementById('filter-type');
+            filterType.addEventListener('change', function() {
+                const selectedType = this.value;
+                const rows = document.querySelectorAll('#bebidas-table tbody tr');
+                
+                if (!selectedType) {
+                    rows.forEach(row => row.style.display = '');
+                    return;
+                }
+                
+                rows.forEach(row => {
+                    const typeValue = row.cells[2].textContent;
+                    if (typeValue === this.options[this.selectedIndex].text) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+            
+            // Limpar formulário
+            document.getElementById('clear-form-btn').addEventListener('click', function() {
+                document.getElementById('form-title').textContent = 'Adicionar Nova Bebida';
+                document.getElementById('bebida-form').reset();
+                document.getElementById('bebida-id').value = '';
+            });
+            
+            // Cancelar edição
+            document.getElementById('cancel-btn').addEventListener('click', function() {
+                document.getElementById('form-title').textContent = 'Adicionar Nova Bebida';
+                document.getElementById('bebida-form').reset();
+                document.getElementById('bebida-id').value = '';
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chef Balance - Dashboard</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Estilos específicos para o dashboard */
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #2c3e50 0%, #4a6491 100%);
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        
+        .welcome-section h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .welcome-section p {
+            font-size: 1.3rem;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+        
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: #3498db;
+        }
+        
+        .stat-card:nth-child(2)::before {
+            background: #2ecc71;
+        }
+        
+        .stat-card:nth-child(3)::before {
+            background: #f39c12;
+        }
+        
+        .stat-card i {
+            font-size: 3.5rem;
+            color: #3498db;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card:nth-child(2) i {
+            color: #2ecc71;
+        }
+        
+        .stat-card:nth-child(3) i {
+            color: #f39c12;
+        }
+        
+        .stat-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .stat-card .stat-value {
+            font-size: 2.8rem;
+            font-weight: bold;
+            color: #2c3e50;
+            line-height: 1.2;
+        }
+        
+        .stat-card .stat-label {
+            color: #7f8c8d;
+            font-size: 1rem;
+            margin-top: 5px;
+        }
+        
+        .action-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .action-card {
+            background: white;
+            border-radius: 12px;
+            padding: 35px 30px;
+            text-align: center;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .action-card:hover {
+            transform: translateY(-5px);
+            border-color: #3498db;
+            box-shadow: 0 12px 25px rgba(0,0,0,0.12);
+        }
+        
+        .action-card i {
+            font-size: 4.5rem;
+            margin-bottom: 25px;
+            color: #3498db;
+            background: rgba(52, 152, 219, 0.1);
+            width: 100px;
+            height: 100px;
+            line-height: 100px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        .action-card:nth-child(2) i {
+            color: #2ecc71;
+            background: rgba(46, 204, 113, 0.1);
+        }
+        
+        .action-card:nth-child(3) i {
+            color: #f39c12;
+            background: rgba(243, 156, 18, 0.1);
+        }
+        
+        .action-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        .action-card p {
+            color: #6c757d;
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        .action-card .btn {
+            display: inline-block;
+            padding: 14px 35px;
+            background: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .action-card .btn:hover {
+            background: #2980b9;
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(52, 152, 219, 0.4);
+        }
+        
+        .action-card:nth-child(2) .btn {
+            background: #2ecc71;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+        }
+        
+        .action-card:nth-child(2) .btn:hover {
+            background: #27ae60;
+            box-shadow: 0 7px 20px rgba(46, 204, 113, 0.4);
+        }
+        
+        .action-card:nth-child(3) .btn {
+            background: #f39c12;
+            box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3);
+        }
+        
+        .action-card:nth-child(3) .btn:hover {
+            background: #d35400;
+            box-shadow: 0 7px 20px rgba(243, 156, 18, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <!-- Botão de Toggle do Menu -->
+    <button id="menu-toggle" class="menu-toggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Menu Lateral -->
+    <nav class="menu-lateral">
+        <div class="menu-header">
+            <i class="fas fa-cocktail"></i>
+            <h3>Chef Balance</h3>
+        </div>
+        <a href="index.html" class="active">
+            <i class="fas fa-home"></i> Dashboard
+        </a>
+        <a href="cadastro-bebidas.html">
+            <i class="fas fa-wine-bottle"></i> Cadastro de Bebidas
+        </a>
+        <a href="estoque.html">
+            <i class="fas fa-warehouse"></i> Gerenciar Estoque
+        </a>
+        <a href="tipos.html">
+            <i class="fas fa-tags"></i> Tipos de Bebida
+        </a>
+        <div class="menu-footer">
+            <p>Sistema de Gestão de Bebidas</p>
+            <p>v2.0</p>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="welcome-section">
+            <h1>Bem-vindo ao Chef Balance!</h1>
+            <p>Gerencie seu estoque de bebidas, cadastre novos produtos e acompanhe movimentações de forma simples e eficiente.</p>
+        </div>
+        
+        
+        
+        <div class="action-cards">
+            <div class="action-card">
+                <i class="fas fa-plus-circle"></i>
+                <h3>Cadastrar Bebida</h3>
+                <p>Adicione uma nova bebida ao seu catálogo com informações completas como nome, tipo, preços e quantidade em estoque.</p>
+                <a href="cadastro-bebidas.html" class="btn">Cadastrar Agora</a>
+            </div>
+            
+            <div class="action-card">
+                <i class="fas fa-warehouse"></i>
+                <h3>Gerenciar Estoque</h3>
+                <p>Registre entradas, saídas e ajustes de estoque. Acompanhe o histórico de movimentações e saldos atuais.</p>
+                <a href="estoque.html" class="btn">Acessar Estoque</a>
+            </div>
+            
+            <div class="action-card">
+                <i class="fas fa-tags"></i>
+                <h3>Gerenciar Categorias</h3>
+                <p>Crie e edite categorias de bebidas para organizar seu catálogo. Tipos como vinhos, destilados, cervejas, etc.</p>
+                <a href="tipos.html" class="btn">Ver Categorias</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/menu.js"></script>
+    <script>
+        // Simulação de funcionalidades para demonstração
+        document.addEventListener('DOMContentLoaded', () => {
+            // Menu toggle
+            const menuToggle = document.getElementById('menu-toggle');
+            const menuLateral = document.querySelector('.menu-lateral');
+            
+            menuToggle.addEventListener('click', () => {
+                menuLateral.classList.toggle('aberto');
+                document.body.classList.toggle('menu-aberto');
+            });
+        });
+    </script>
+</body>
+</html>
+
+

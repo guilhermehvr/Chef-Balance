@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Chef Balance - Tipos de Bebida</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Estilos específicos para a página de tipos */
+        .header-section {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+            border-bottom: 2px solid #3498db;
+        }
+        
+        .header-section h1 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .header-section p {
+            font-size: 1.1rem;
+            color: #495057;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .form-container {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .form-header h2 {
+            margin: 0;
+            color: #2c3e50;
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .table-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .table-controls .form-group {
+            flex: 1;
+            min-width: 200px;
+            margin-bottom: 0;
+        }
+        
+        .action-btn {
+            padding: 8px 15px;
+            margin-right: 5px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="confirm-modal-tipo" class="modal">
+        <div class="modal-content">
+            <h3>Confirmar Exclusão</h3>
+            <p>Tem certeza que deseja excluir este tipo?</p>
+            <div class="modal-actions">
+                <button id="confirm-delete-btn-tipo" class="confirm-btn">Excluir</button>
+                <button id="cancel-delete-btn-tipo" class="cancel-btn">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botão de Toggle do Menu -->
+    <button id="menu-toggle" class="menu-toggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Menu Lateral -->
+    <nav class="menu-lateral">
+        <div class="menu-header">
+            <i class="fas fa-cocktail"></i>
+            <h3>Chef Balance</h3>
+        </div>
+        <a href="index.html">
+            <i class="fas fa-home"></i> Dashboard
+        </a>
+        <a href="cadastro-bebidas.html">
+            <i class="fas fa-wine-bottle"></i> Cadastro de Bebidas
+        </a>
+        <a href="estoque.html">
+            <i class="fas fa-warehouse"></i> Gerenciar Estoque
+        </a>
+        <a href="tipos.html" class="active">
+            <i class="fas fa-tags"></i> Tipos de Bebida
+        </a>
+        <div class="menu-footer">
+            <p>Sistema de Gestão de Bebidas</p>
+            <p>v2.0</p>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header-section">
+            <h1><i class="fas fa-tags"></i> Tipos de Bebida</h1>
+            <p>Gerencie as categorias de bebidas do seu estabelecimento</p>
+        </div>
+        
+        <div class="form-container">
+            <div class="form-header">
+                <h2 id="form-title-tipo">Adicionar Novo Tipo</h2>
+                <button id="clear-form-btn-tipo" class="action-btn">
+                    <i class="fas fa-redo"></i> Limpar
+                </button>
+            </div>
+            
+            <form id="tipo-form">
+                <input type="hidden" id="tipo-id">
+                <div class="form-group">
+                    <label for="nome-tipo"><i class="fas fa-tag"></i> Nome do Tipo:</label>
+                    <input type="text" id="nome-tipo" required minlength="2" placeholder="Ex: Vinho, Whisky, Cerveja">
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" id="save-btn-tipo" class="primary-btn">
+                        <i class="fas fa-save"></i> Salvar
+                    </button>
+                    <button type="button" id="cancel-btn-tipo" class="secondary-btn">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="table-container">
+            <div class="table-header">
+                <h2><i class="fas fa-list"></i> Tipos Cadastrados</h2>
+                <div class="table-controls">
+                    <div class="form-group">
+                        <input type="text" id="search-tipo-input" placeholder="Pesquisar por nome...">
+                    </div>
+                    <button id="search-tipo-btn" class="action-btn">
+                        <i class="fas fa-search"></i> Buscar
+                    </button>
+                </div>
+            </div>
+            
+            <table id="tipos-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Vinho</td>
+                        <td>
+                            <button class="action-btn edit-btn">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                            <button class="action-btn delete-btn">
+                                <i class="fas fa-trash"></i> Excluir
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Whisky</td>
+                        <td>
+                            <button class="action-btn edit-btn">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                            <button class="action-btn delete-btn">
+                                <i class="fas fa-trash"></i> Excluir
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Cerveja</td>
+                        <td>
+                            <button class="action-btn edit-btn">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                            <button class="action-btn delete-btn">
+                                <i class="fas fa-trash"></i> Excluir
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Vodka</td>
+                        <td>
+                            <button class="action-btn edit-btn">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                            <button class="action-btn delete-btn">
+                                <i class="fas fa-trash"></i> Excluir
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>Licor</td>
+                        <td>
+                            <button class="action-btn edit-btn">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                            <button class="action-btn delete-btn">
+                                <i class="fas fa-trash"></i> Excluir
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            
+       
+
+    <script src="js/tipos.js"></script>
+    <script src="js/menu.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Menu toggle
+            const menuToggle = document.getElementById('menu-toggle');
+            const menuLateral = document.querySelector('.menu-lateral');
+            
+            menuToggle.addEventListener('click', () => {
+                menuLateral.classList.toggle('aberto');
+                document.body.classList.toggle('menu-aberto');
+            });
+            
+            // Botões de ação na tabela
+            const editButtons = document.querySelectorAll('.edit-btn');
+            const deleteButtons = document.querySelectorAll('.delete-btn');
+            
+            editButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const row = this.closest('tr');
+                    const id = row.cells[0].textContent;
+                    const nome = row.cells[1].textContent;
+                    
+                    // Preencher formulário
+                    document.getElementById('form-title-tipo').textContent = 'Editar Tipo';
+                    document.getElementById('tipo-id').value = id;
+                    document.getElementById('nome-tipo').value = nome;
+                    
+                    // Rolar para o formulário
+                    document.querySelector('.form-container').scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+            
+            deleteButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const row = this.closest('tr');
+                    const id = row.cells[0].textContent;
+                    const nome = row.cells[1].textContent;
+                    
+                    if(confirm(`Tem certeza que deseja excluir o tipo "${nome}" (ID: ${id})?`)) {
+                        row.style.opacity = '0.5';
+                        setTimeout(() => {
+                            row.remove();
+                        }, 300);
+                    }
+                });
+            });
+            
+            // Pesquisa em tempo real
+            const searchInput = document.getElementById('search-tipo-input');
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase().trim();
+                const rows = document.querySelectorAll('#tipos-table tbody tr');
+                
+                rows.forEach(row => {
+                    const name = row.cells[1].textContent.toLowerCase();
+                    if(name.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+            
+            // Limpar formulário
+            document.getElementById('clear-form-btn-tipo').addEventListener('click', function() {
+                document.getElementById('form-title-tipo').textContent = 'Adicionar Novo Tipo';
+                document.getElementById('tipo-form').reset();
+                document.getElementById('tipo-id').value = '';
+            });
+            
+            // Cancelar edição
+            document.getElementById('cancel-btn-tipo').addEventListener('click', function() {
+                document.getElementById('form-title-tipo').textContent = 'Adicionar Novo Tipo';
+                document.getElementById('tipo-form').reset();
+                document.getElementById('tipo-id').value = '';
+            });
+        });
+    </script>
+</body>
+</html>
